@@ -1,7 +1,13 @@
-const Sidebar = () => {
+import { FC, ReactElement } from 'react';
+
+type PropsType = {
+  children: ReactElement
+}
+
+const Sidebar: FC<PropsType> = ({children}) => {
   return (
     <div className='sidebar'>
-      Privet
+      {children}
     </div>
   )
 };

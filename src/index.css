@@ -6,3 +6,9 @@
 
 /* Card */
 @import url(../src/components/Card/Card.css);
+
+/* Carriers */
+@import url(../src/components/Carriers/Carriers.css);
+
+/* Form */
+@import url(../src/components/Form/Form.css);
