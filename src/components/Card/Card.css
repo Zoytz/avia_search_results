@@ -1,0 +1,124 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  padding: 10px;
+}
+
+.card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgb(70, 127, 193);
+  color: #fff;
+  font-weight: bold;
+  padding: 15px;
+}
+
+.card__title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 5px;
+  border-bottom: 1px solid rgb(210, 209, 209);
+}
+
+.card__price {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 30px;
+}
+
+.card__hint {
+  font-size: 15px;
+}
+
+.card__span {
+  color: rgb(78, 154, 242);
+}
+
+.card__dates {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card__date {
+  font-size: 20px;
+}
+
+.card__date_type_time {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.card__time {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.card__transfer {
+  color: orange;
+  font-size: 20px;
+  text-align: center;
+  position: relative;
+}
+
+.card__transfer_type_empty {
+  height: 1px;
+  width: 84%;
+  margin: 0 auto;
+  background-color: grey;
+}
+
+.card__transfer-text::before {
+  content: '';
+  display: block;
+  width: 35%;
+  height: 1px;
+  background-color: grey;
+  position: absolute;
+  top: 50%;
+  left: 8%;
+}
+
+.card__transfer-text::after {
+  content: '';
+  display: block;
+  width: 35%;
+  height: 1px;
+  background-color: grey;
+  position: absolute;
+  top: 50%;
+  right: 8%;
+}
+
+.card__carrier {
+  font-size: 20px;
+}
+
+.card__carrier:first-of-type {
+  padding-bottom: 10px;
+  border-bottom: 3px solid rgb(70, 127, 193);
+}
+
+.card__button {
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 25px;
+  padding: 10px;
+  border: none;
+  background-color: rgb(250, 194, 90);
+  cursor: pointer;
+}
+
+.card__button:hover {
+  background-color: rgb(249, 180, 51);
+}
+
+.card__button:active {
+  background-color: rgb(194, 136, 28);
+}
