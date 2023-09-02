@@ -1,15 +1,62 @@
 import clockImage from '../../images/clock.svg';
 
+import AirFrance from '../../images/AirFrance.png';
+import KLM from '../../images/KLM.png';
+import Aeroflot from '../../images/Aeroflot.png';
+import Turkish from '../../images/TurkishAirlines.png';
+import Finnair from '../../images/Finnair.png';
+import Baltic from '../../images/AirBaltic.png';
+import AlitaliaSocieta from '../../images/Alitalia.png';
+import Pegasus from '../../images/Pegasus.png';
+import Brussels from '../../images/Brussels.png';
+import LOT from '../../images/LOT.png';
+
 const Card = ({ flight }: any) => {
 
   const handleClickButton = () => {
     alert('Этого функционала нет в ТЗ 😉')
   };
 
+  let cardLogo = '';
+
+  switch (flight.carrier.caption) {
+    case 'Air France':
+      cardLogo = AirFrance;
+      break
+    case 'KLM':
+      cardLogo = KLM;
+      break
+    case 'Аэрофлот - российские авиалинии':
+      cardLogo = Aeroflot;
+      break
+    case 'TURK HAVA YOLLARI A.O.':
+      cardLogo = Turkish;
+      break
+    case 'Finnair Oyj':
+      cardLogo = Finnair;
+      break
+    case 'Air Baltic Corporation A/S':
+      cardLogo = Baltic;
+      break
+    case 'Alitalia Societa Aerea Italiana':
+      cardLogo = AlitaliaSocieta;
+      break
+    case 'Pegasus Hava Tasimaciligi A.S.':
+      cardLogo = Pegasus;
+      break
+    case 'Brussels Airlines':
+      cardLogo = Brussels;
+      break
+    case 'LOT Polish Airlines':
+      cardLogo = LOT;
+      break
+  };
+
   return (
     <li className='card'>
       <div className='card__header'>
-        <div className='card__logo'>Логотип {flight.carrier.caption}</div>
+        <img src={cardLogo} alt={`Логотип ${flight.carrier.caption}`} className='card__logo' />
+        <div className='card__logo'></div>
         <p className='card__price'>
           {flight.price.total.amount} ₽
           <span className='card__hint'>
@@ -55,9 +102,9 @@ const Card = ({ flight }: any) => {
                 hasTransfer ?
                   <h2 className='card__title'>
                     {
-                    leg.segments[0].departureCity ?
-                    leg.segments[0].departureCity.caption :
-                    ''
+                      leg.segments[0].departureCity ?
+                        leg.segments[0].departureCity.caption :
+                        ''
                     }, {leg.segments[0].departureAirport.caption} <span className='card__span'>{` (${leg.segments[0].departureAirport.uid})`} </span> → {leg.segments[1].arrivalCity ?
                       leg.segments[1].arrivalCity.caption :
                       ''

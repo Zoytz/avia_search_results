@@ -122,3 +122,7 @@
 .card__button:active {
   background-color: rgb(194, 136, 28);
 }
+
+.card__logo {
+  width: 120px;
+}
