@@ -3,6 +3,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import data from '../../data/flights.json';
 import Carriers from '../Carriers/Carriers';
 import Form from '../Form/Form';
+import { useState } from 'react';
 
 // На всякий случай =)
 const parsedData = JSON.parse(JSON.stringify(data));
@@ -17,33 +18,66 @@ const f = result.flights.map((item: any) => item.flight.legs[0].segments[0].depa
 
 // Создаем массив из компаний-перевозчиков
 const carriersArr = result.flights.map((item: any) => item.flight.carrier.caption);
+
 // Создаем сет с уникальными названиями компаний-перевозчиков
 const carriersSet = new Set(carriersArr);
-console.log(carriersSet)
 
+// Создаем массив, куда будем складывать авиакомпании и их минимальную цену за билет
 const carriersArrWithMinimalPrice: { carrier: string, minPrice: number }[] = [];
 
+// Проходим по сету авиакомпаний
 carriersSet.forEach((carrierCaption: any) => {
+
+  // Создаем пустой массив, куда будем складывать цены всех билетов авиакомпании
   const pricesArr: number[] = [];
+
+  // Проходимся по массиву всех полетов
   result.flights.forEach((item: any) => {
+
+    // Если совпадает название авиакомпании из сета с названием из полета - добавляем цену в массив цен
     if (item.flight.carrier.caption === carrierCaption) {
       pricesArr.push(Number(item.flight.price.total.amount));
     }
   });
+
+  // Сортируем массив цен авиакомпании по возрастанию
   pricesArr.sort((a, b) => {
     return a - b;
   });
+
+  // Добавляем в результирующий массив объект с названием авиакомпании и минимальной ценой за билет
   carriersArrWithMinimalPrice.push({ carrier: carrierCaption, minPrice: pricesArr[0] })
 });
 
 const App = () => {
+
+  const [filteredData, setFilteredData] = useState()
+  const [selectedCarriers, setSelectedCarriers] = useState<string[]>([]);
+
+  // Функция фильтра по названию авиакомпании
+  const handleSelectCarrier = (carrierCaption: any) => {
+    // Проверяем - есть ли в массиве выбранных авиакомпаний переданное название
+    if (selectedCarriers.includes(carrierCaption)) {
+      // Если есть - удаляем эту авиакомпанию из массива
+      const updatedSelectedCarriers = selectedCarriers.filter(carrier => carrier !== carrierCaption);
+      setSelectedCarriers(updatedSelectedCarriers);
+    } else {
+      // Если нет - добавляем авиакомпанию в массив
+      const updatedSelectedCarriers = [...selectedCarriers, carrierCaption];
+      setSelectedCarriers(updatedSelectedCarriers);
+    }
+  };
 
   return (
     <div className='page'>
       <main className='main'>
         <Sidebar>
           <Form>
-            <Carriers carriers={carriersArrWithMinimalPrice} />
+            <Carriers
+              handleSelectCarrier={handleSelectCarrier}
+              carriers={carriersArrWithMinimalPrice}
+              selectedCarriers={selectedCarriers}
+            />
           </Form>
         </Sidebar>
         <section className='content'>

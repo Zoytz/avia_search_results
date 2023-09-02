@@ -1,19 +1,32 @@
-import { FC } from "react";
+import { FC } from 'react';
 
 type PropsType = {
-  carriers: {carrier: string, minPrice: number}[]
+  carriers: { carrier: string, minPrice: number }[]
+  handleSelectCarrier: (arg: string) => void
+  selectedCarriers: string[]
 }
 
-const Carriers: FC<PropsType> = ({carriers}) => {
+const Carriers: FC<PropsType> = ({ carriers, handleSelectCarrier, selectedCarriers }) => {
+
   return (
     <ul className='carriers'>
       {
         carriers.map((carrier) => {
           return (
-            <li className='carrier'>
-              <input value={carrier.carrier} type='checkbox' className='carrier__checkbox' />
-              <p title={carrier.carrier} className='carrier__caption'>{carrier.carrier}</p>
-              <p className='carrier__price'>от {carrier.minPrice}</p>
+            <li key={carrier.carrier} className='carrier'>
+              <input
+                onClick={(e: any) => handleSelectCarrier(e.target.value)}
+                value={carrier.carrier}
+                type='checkbox'
+                className='carrier__checkbox'
+                checked={selectedCarriers.includes(carrier.carrier)}
+                />
+              <p
+                title={carrier.carrier}
+                className='carrier__caption'>
+                {carrier.carrier}
+              </p>
+              <p className='carrier__price'>от {carrier.minPrice} р.</p>
             </li>
           )
         })

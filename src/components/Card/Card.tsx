@@ -97,7 +97,9 @@ const Card = ({ flight }: any) => {
             arrivalDate.getMinutes();
 
           return (
-            <>
+            <div
+              key={`${leg.segments[0].flightNumber}${leg.segments[0].arrivalDate}`} className='card__content'
+            >
               {
                 hasTransfer ?
                   <h2 className='card__title'>
@@ -151,7 +153,7 @@ const Card = ({ flight }: any) => {
               <p className='card__carrier'>
                 Рейс выполняет: {flight.carrier.caption}
               </p>
-            </>
+            </div>
           )
         })
       }
