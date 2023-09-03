@@ -1,10 +1,17 @@
-import { FC, ReactElement } from 'react';
+import { ChangeEvent, FC, ReactElement } from 'react';
 
 type PropsType = {
   children: ReactElement
+  handleSetMinPrice: (arg: number) => void
+  handleSetMaxPrice: (arg: number) => void
 };
 
-const Form: FC<PropsType> = ({ children }) => {
+const Form: FC<PropsType> = ({ 
+  children, 
+  handleSetMinPrice, 
+  handleSetMaxPrice }) => {
+
+    console.log('render Form')  
   return (
     <form className='form'>
       <h3 className='form__title'>
@@ -43,11 +50,21 @@ const Form: FC<PropsType> = ({ children }) => {
       <div className='form__section'>
         <label className='form__label'>
           От
-          <input type='number' className='form__input' />
+          <input
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(Number(e.target.value))}
+            type='number'
+            className='form__input'
+            name='minPrice'
+          />
         </label>
         <label className='form__label'>
           До
-          <input type='number' className='form__input' />
+          <input
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(Number(e.target.value))}
+            type='number'
+            className='form__input'
+            name='maxPrice'
+          />
         </label>
       </div>
       <h3 className='form__title'>

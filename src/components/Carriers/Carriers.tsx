@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ChangeEvent, FC } from 'react';
 
 type PropsType = {
   carriers: { carrier: string, minPrice: number }[]
@@ -6,7 +6,16 @@ type PropsType = {
   selectedCarriers: string[]
 }
 
-const Carriers: FC<PropsType> = ({ carriers, handleSelectCarrier, selectedCarriers }) => {
+const Carriers: FC<PropsType> = ({ 
+  carriers, 
+  handleSelectCarrier, 
+  selectedCarriers }) => {
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    handleSelectCarrier(e.target.value);
+  };
+
+  console.log('render Carriers')
 
   return (
     <ul className='carriers'>
@@ -15,7 +24,7 @@ const Carriers: FC<PropsType> = ({ carriers, handleSelectCarrier, selectedCarrie
           return (
             <li key={carrier.carrier} className='carrier'>
               <input
-                onClick={(e: any) => handleSelectCarrier(e.target.value)}
+                onChange={handleChange}
                 value={carrier.carrier}
                 type='checkbox'
                 className='carrier__checkbox'

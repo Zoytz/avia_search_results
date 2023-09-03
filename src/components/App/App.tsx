@@ -3,7 +3,7 @@ import Sidebar from '../Sidebar/Sidebar';
 import data from '../../data/flights.json';
 import Carriers from '../Carriers/Carriers';
 import Form from '../Form/Form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // На всякий случай =)
 const parsedData = JSON.parse(JSON.stringify(data));
@@ -51,8 +51,35 @@ carriersSet.forEach((carrierCaption: any) => {
 
 const App = () => {
 
-  const [filteredData, setFilteredData] = useState()
-  const [selectedCarriers, setSelectedCarriers] = useState<string[]>([]);
+  const [filteredFlights, setFilteredFlights] = useState([]);
+  const [selectedCarriers, setSelectedCarriers] = useState(Array.from(carriersSet) as string[]);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(1000000);
+  const [cardsCount, setCardsCount] = useState(2);
+
+  const filterByCarriers = (item: any) => {
+    if (selectedCarriers.includes(item.flight.carrier.caption)) {
+      return item;
+    };
+  };
+
+  useEffect(() => {
+    const filteredByCarriersArr = result.flights.filter(filterByCarriers);
+    const reducedFlightsArr = filteredByCarriersArr.slice(0, cardsCount);
+    setFilteredFlights(reducedFlightsArr);
+  }, [cardsCount, selectedCarriers]);
+
+  const handleSetMinPrice = (newPrice: number) => {
+    setMinPrice(newPrice);
+  };
+
+  const handleSetMaxPrice = (newPrice: number) => {
+    setMaxPrice(newPrice);
+  };
+
+  const handleShowMoreCards = () => {
+    setCardsCount(prev => prev + 2);
+  };
 
   // Функция фильтра по названию авиакомпании
   const handleSelectCarrier = (carrierCaption: any) => {
@@ -68,11 +95,16 @@ const App = () => {
     }
   };
 
+  console.log('render App')
+
   return (
     <div className='page'>
       <main className='main'>
         <Sidebar>
-          <Form>
+          <Form
+            handleSetMinPrice={handleSetMinPrice}
+            handleSetMaxPrice={handleSetMaxPrice}
+          >
             <Carriers
               handleSelectCarrier={handleSelectCarrier}
               carriers={carriersArrWithMinimalPrice}
@@ -81,17 +113,22 @@ const App = () => {
           </Form>
         </Sidebar>
         <section className='content'>
-          <ul className='items'>
+          <ul className='cards'>
             {
               // Мапимся по перелетам
-              result.flights.map((item: any) => {
+              filteredFlights.map((item: any) => {
                 return (
                   <Card key={item.flightToken} flight={item.flight} />
                 )
               })
             }
           </ul>
-          <button className='content__button'>Показать еще</button>
+          <button
+            onClick={handleShowMoreCards}
+            className='content__button'
+          >
+            Показать еще
+          </button>
         </section>
       </main>
     </div>
