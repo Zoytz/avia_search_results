@@ -4,14 +4,23 @@ type PropsType = {
   children: ReactElement
   handleSetMinPrice: (arg: number) => void
   handleSetMaxPrice: (arg: number) => void
+  minPrice: number
+  maxPrice: number
+  handleSetTransfersFilters: (arg: string) => void
+  transferFilters: string[]
 };
 
-const Form: FC<PropsType> = ({ 
-  children, 
-  handleSetMinPrice, 
-  handleSetMaxPrice }) => {
+const Form: FC<PropsType> = ({
+  children,
+  handleSetMinPrice,
+  handleSetMaxPrice,
+  minPrice,
+  maxPrice,
+  handleSetTransfersFilters,
+  transferFilters,
+}) => {
 
-    console.log('render Form')  
+  console.log('render Form')
   return (
     <form className='form'>
       <h3 className='form__title'>
@@ -36,11 +45,23 @@ const Form: FC<PropsType> = ({
       </h3>
       <div className='form__section'>
         <label className='form__label'>
-          <input type='checkbox' className='form__checkbox' />
+          <input
+            checked={transferFilters.includes('transfer')}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetTransfersFilters(e.target.value)}
+            value={'transfer'}
+            type='checkbox'
+            className='form__checkbox'
+          />
           - 1 пересадка
         </label>
         <label className='form__label'>
-          <input type='checkbox' className='form__checkbox' />
+          <input
+            checked={transferFilters.includes('without')}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetTransfersFilters(e.target.value)}
+            value={'without'}
+            type='checkbox'
+            className='form__checkbox'
+          />
           - без пересадок
         </label>
       </div>
@@ -51,19 +72,21 @@ const Form: FC<PropsType> = ({
         <label className='form__label'>
           От
           <input
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(Number(e.target.value))}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(parseInt(e.target.value))}
             type='number'
             className='form__input'
             name='minPrice'
+            value={minPrice || ''}
           />
         </label>
         <label className='form__label'>
           До
           <input
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(Number(e.target.value))}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMaxPrice(parseInt(e.target.value))}
             type='number'
             className='form__input'
             name='maxPrice'
+            value={maxPrice || ''}
           />
         </label>
       </div>

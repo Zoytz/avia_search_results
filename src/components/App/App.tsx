@@ -56,6 +56,14 @@ const App = () => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [cardsCount, setCardsCount] = useState(2);
+  const [transferFilters, setTransferFilters] = useState<string[]>([]);
+
+  const filterByTransfers = (item: any) => {
+    if (transferFilters.length === 0 || transferFilters.length === 2) return item;
+    const segmentsArr = item.flight.legs.map((leg: any) => leg.segments);
+    if (transferFilters[0] === 'transfer' && segmentsArr.flat().length > 3) return item;
+    if (transferFilters[0] === 'without' && segmentsArr.flat().length <= 2) return item;
+  };
 
   const filterByCarriers = (item: any) => {
     if (selectedCarriers.includes(item.flight.carrier.caption)) {
@@ -65,9 +73,12 @@ const App = () => {
 
   useEffect(() => {
     const filteredByCarriersArr = result.flights.filter(filterByCarriers);
-    const reducedFlightsArr = filteredByCarriersArr.slice(0, cardsCount);
+    const filteredByPriceArr = filteredByCarriersArr.filter((item: any) => Number(item.flight.price.total.amount) <= maxPrice && Number(item.flight.price.total.amount) >= minPrice);
+    const filteredByTransfersArr = filteredByPriceArr.filter(filterByTransfers);
+    const reducedFlightsArr = filteredByTransfersArr.slice(0, cardsCount);
     setFilteredFlights(reducedFlightsArr);
-  }, [cardsCount, selectedCarriers]);
+
+  }, [cardsCount, selectedCarriers, minPrice, maxPrice, transferFilters]);
 
   const handleSetMinPrice = (newPrice: number) => {
     setMinPrice(newPrice);
@@ -75,6 +86,16 @@ const App = () => {
 
   const handleSetMaxPrice = (newPrice: number) => {
     setMaxPrice(newPrice);
+  };
+
+  const handleSetTransfersFilters = (newTransfersFilter: string) => {
+    if (transferFilters.includes(newTransfersFilter)) {
+      const updatedTransferFilters = transferFilters.filter(transferFilter => transferFilter !== newTransfersFilter);
+      setTransferFilters(updatedTransferFilters);
+    } else {
+      const updatedTransferFilters = [...transferFilters, newTransfersFilter];
+      setTransferFilters(updatedTransferFilters);
+    };
   };
 
   const handleShowMoreCards = () => {
@@ -104,6 +125,10 @@ const App = () => {
           <Form
             handleSetMinPrice={handleSetMinPrice}
             handleSetMaxPrice={handleSetMaxPrice}
+            minPrice={minPrice}
+            maxPrice={maxPrice}
+            handleSetTransfersFilters={handleSetTransfersFilters}
+            transferFilters={transferFilters}
           >
             <Carriers
               handleSelectCarrier={handleSelectCarrier}
