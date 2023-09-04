@@ -155,7 +155,7 @@ const App = () => {
         </Sidebar>
         <section className='content'>
           {
-            !filteredFlights ?
+            !filteredFlights || filteredFlights.length === 0 ?
               <p className='content__hint'>
                 Перелеты не найдены
               </p>

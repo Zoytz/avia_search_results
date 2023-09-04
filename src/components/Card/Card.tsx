@@ -2,7 +2,7 @@ import clockImage from '../../images/clock.svg';
 
 import AirFrance from '../../images/AirFrance.png';
 import KLM from '../../images/KLM.png';
-import Aeroflot from '../../images/Aeroflot.png';
+import Aeroflot from '../../images/Aeroflot.svg';
 import Turkish from '../../images/TurkishAirlines.png';
 import Finnair from '../../images/Finnair.png';
 import Baltic from '../../images/AirBaltic.png';
