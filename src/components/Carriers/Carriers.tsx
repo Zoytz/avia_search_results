@@ -15,8 +15,6 @@ const Carriers: FC<PropsType> = ({
     handleSelectCarrier(e.target.value);
   };
 
-  console.log('render Carriers')
-
   return (
     <ul className='carriers'>
       {

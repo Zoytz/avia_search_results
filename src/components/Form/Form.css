@@ -16,7 +16,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  color: rgb(111, 111, 111);;
+  color: rgb(111, 111, 111);
 }
 
 .form__radio {

@@ -4,20 +4,16 @@ import data from '../../data/flights.json';
 import Carriers from '../Carriers/Carriers';
 import Form from '../Form/Form';
 import { useEffect, useState } from 'react';
+import { FlightsItemType, FlightsType } from '../../types';
 
 // На всякий случай =)
 const parsedData = JSON.parse(JSON.stringify(data));
 
-console.log(parsedData)
-
 // Достаем корневой объект из данных
 const { result } = parsedData;
 
-const f = result.flights.map((item: any) => item.flight.legs[0].segments[0].departureCity)
-// console.log(f)
-
 // Создаем массив из компаний-перевозчиков
-const carriersArr = result.flights.map((item: any) => item.flight.carrier.caption);
+const carriersArr = result.flights.map((item: FlightsItemType) => item.flight.carrier.caption);
 
 // Создаем сет с уникальными названиями компаний-перевозчиков
 const carriersSet = new Set(carriersArr);
@@ -32,7 +28,7 @@ carriersSet.forEach((carrierCaption: any) => {
   const pricesArr: number[] = [];
 
   // Проходимся по массиву всех полетов
-  result.flights.forEach((item: any) => {
+  result.flights.forEach((item: FlightsItemType) => {
 
     // Если совпадает название авиакомпании из сета с названием из полета - добавляем цену в массив цен
     if (item.flight.carrier.caption === carrierCaption) {
@@ -51,34 +47,72 @@ carriersSet.forEach((carrierCaption: any) => {
 
 const App = () => {
 
-  const [filteredFlights, setFilteredFlights] = useState([]);
+  const [filteredFlights, setFilteredFlights] = useState<FlightsType | []>([]);
   const [selectedCarriers, setSelectedCarriers] = useState(Array.from(carriersSet) as string[]);
-  const [minPrice, setMinPrice] = useState(0);
+  const [minPrice, setMinPrice] = useState(1);
   const [maxPrice, setMaxPrice] = useState(1000000);
   const [cardsCount, setCardsCount] = useState(2);
   const [transferFilters, setTransferFilters] = useState<string[]>([]);
+  const [sortOptions, setSortOptions] = useState<'toLowPrice' | 'toHigthPrice' | 'time'>('toHigthPrice');
 
-  const filterByTransfers = (item: any) => {
+  // Функция сортировки перелетов
+  const filterBySortOptions = (flights: FlightsType) => {
+    
+    if (sortOptions === 'toLowPrice') {
+      return flights.sort((a, b) => {
+        return Number(b.flight.price.total.amount) - Number(a.flight.price.total.amount);
+      });
+    };
+
+    if (sortOptions === 'toHigthPrice') {
+      return flights.sort((a, b) => {
+        return Number(a.flight.price.total.amount) - Number(b.flight.price.total.amount);
+      });
+    };
+
+    if (sortOptions === 'time') {
+      return flights.sort((a, b) => {
+        return (a.flight.legs[0].duration + a.flight.legs[1].duration) - (b.flight.legs[0].duration + b.flight.legs[1].duration);
+      });
+    };
+
+    return [];
+
+  };
+
+  // Функция фильтрации по пересадкам
+  const filterByTransfers = (item: FlightsItemType) => {
+    // Проверяем - если длина массива фильтров равна 0 или 2 - показываем все перелеты
     if (transferFilters.length === 0 || transferFilters.length === 2) return item;
-    const segmentsArr = item.flight.legs.map((leg: any) => leg.segments);
+    // Создаем массив сегментов
+    const segmentsArr = item.flight.legs.map((leg) => leg.segments);
+    // Если в массиме фильтров есть фильтр пересадки - проверяем, чтобы сегментов было больше 3 и в таком случае возвращаем перелет
     if (transferFilters[0] === 'transfer' && segmentsArr.flat().length > 3) return item;
+    // Если в массиме фильтров есть фильтр отсутствия пересадки - проверяем, чтобы сегментов было 2 или меньше и в таком случае возвращаем перелет
     if (transferFilters[0] === 'without' && segmentsArr.flat().length <= 2) return item;
   };
 
-  const filterByCarriers = (item: any) => {
+  // Функция фильтрации по авиакомпаниям
+  const filterByCarriers = (item: FlightsItemType) => {
+    // Проверяем - есть ли авиакомпания в массиве выбранных авиакомпаний и если есть - возвращаем перелет
     if (selectedCarriers.includes(item.flight.carrier.caption)) {
       return item;
     };
   };
 
   useEffect(() => {
+    // Фильтруем перелеты по выбранным авиакомпаниям
     const filteredByCarriersArr = result.flights.filter(filterByCarriers);
-    const filteredByPriceArr = filteredByCarriersArr.filter((item: any) => Number(item.flight.price.total.amount) <= maxPrice && Number(item.flight.price.total.amount) >= minPrice);
+    // Фильтруем перелеты по цене
+    const filteredByPriceArr = filteredByCarriersArr.filter((item: FlightsItemType) => Number(item.flight.price.total.amount) <= maxPrice && Number(item.flight.price.total.amount) >= minPrice);
+    // Фильтруем перелеты по пересадкам
     const filteredByTransfersArr = filteredByPriceArr.filter(filterByTransfers);
-    const reducedFlightsArr = filteredByTransfersArr.slice(0, cardsCount);
+    // Сортируем массив перелетов в соответствии с параметрами фильтра
+    const sortedFlightsArr = filterBySortOptions(filteredByTransfersArr);
+    // Обрезаем получившийся массив перелетов
+    const reducedFlightsArr = sortedFlightsArr.slice(0, cardsCount);
     setFilteredFlights(reducedFlightsArr);
-
-  }, [cardsCount, selectedCarriers, minPrice, maxPrice, transferFilters]);
+  }, [cardsCount, selectedCarriers, minPrice, maxPrice, transferFilters, sortOptions]);
 
   const handleSetMinPrice = (newPrice: number) => {
     setMinPrice(newPrice);
@@ -88,14 +122,22 @@ const App = () => {
     setMaxPrice(newPrice);
   };
 
+  // Функция установки фильтров по пересадкам
   const handleSetTransfersFilters = (newTransfersFilter: string) => {
+    // Проверяем - есть ли в массиве фильтров переданное значение
     if (transferFilters.includes(newTransfersFilter)) {
+      // Если есть - удаляем его из массива
       const updatedTransferFilters = transferFilters.filter(transferFilter => transferFilter !== newTransfersFilter);
       setTransferFilters(updatedTransferFilters);
     } else {
+      // Если нет - добавляем новое значение в массив
       const updatedTransferFilters = [...transferFilters, newTransfersFilter];
       setTransferFilters(updatedTransferFilters);
     };
+  };
+
+  const handleSelectSortOption = (newSortOption: 'toLowPrice' | 'toHigthPrice' | 'time') => {
+    setSortOptions(newSortOption);
   };
 
   const handleShowMoreCards = () => {
@@ -116,8 +158,6 @@ const App = () => {
     }
   };
 
-  console.log('render App')
-
   return (
     <div className='page'>
       <main className='main'>
@@ -129,6 +169,8 @@ const App = () => {
             maxPrice={maxPrice}
             handleSetTransfersFilters={handleSetTransfersFilters}
             transferFilters={transferFilters}
+            sortOptions={sortOptions}
+            handleSelectSortOption={handleSelectSortOption}
           >
             <Carriers
               handleSelectCarrier={handleSelectCarrier}
@@ -138,22 +180,31 @@ const App = () => {
           </Form>
         </Sidebar>
         <section className='content'>
-          <ul className='cards'>
-            {
-              // Мапимся по перелетам
-              filteredFlights.map((item: any) => {
-                return (
-                  <Card key={item.flightToken} flight={item.flight} />
-                )
-              })
-            }
-          </ul>
-          <button
-            onClick={handleShowMoreCards}
-            className='content__button'
-          >
-            Показать еще
-          </button>
+          {
+            !filteredFlights ?
+              <p className='content__hint'>
+                Перелеты не найдены
+              </p>
+              :
+              <>
+                <ul className='cards'>
+                  {
+                    // Мапимся по перелетам
+                    filteredFlights.map((item: FlightsItemType) => {
+                      return (
+                        <Card key={item.flightToken} flight={item.flight} />
+                      )
+                    })
+                  }
+                </ul>
+                <button
+                  onClick={handleShowMoreCards}
+                  className='content__button'
+                >
+                  Показать еще
+                </button>
+              </>
+          }
         </section>
       </main>
     </div>

@@ -8,6 +8,8 @@ type PropsType = {
   maxPrice: number
   handleSetTransfersFilters: (arg: string) => void
   transferFilters: string[]
+  sortOptions: 'toLowPrice' | 'toHigthPrice' | 'time'
+  handleSelectSortOption: (arg: 'toLowPrice' | 'toHigthPrice' | 'time') => void
 };
 
 const Form: FC<PropsType> = ({
@@ -18,9 +20,22 @@ const Form: FC<PropsType> = ({
   maxPrice,
   handleSetTransfersFilters,
   transferFilters,
+  sortOptions,
+  handleSelectSortOption,
 }) => {
 
-  console.log('render Form')
+  const handleValidateInput = (e: any) => {
+    if (['-', '+', ',', '.'].includes(e.key)) e.preventDefault();
+  };
+
+  const handleSetSortOption = (e: ChangeEvent<HTMLInputElement>) => {
+    handleSelectSortOption(e.target.value as 'toLowPrice' | 'toHigthPrice' | 'time');
+  };
+
+  const handleSelectTransferFilters = (e: ChangeEvent<HTMLInputElement>) => {
+    handleSetTransfersFilters(e.target.value);
+  };
+  
   return (
     <form className='form'>
       <h3 className='form__title'>
@@ -28,15 +43,36 @@ const Form: FC<PropsType> = ({
       </h3>
       <div className='form__section'>
         <label className='form__label'>
-          <input name='radio' type='radio' className='form__radio' />
+          <input
+            onChange={handleSetSortOption}
+            checked={sortOptions === 'toHigthPrice'}
+            value='toHigthPrice'
+            name='radio'
+            type='radio'
+            className='form__radio'
+          />
           - по возрастанию цены
         </label>
         <label className='form__label'>
-          <input name='radio' type='radio' className='form__radio' />
+          <input
+            onChange={handleSetSortOption}
+            checked={sortOptions === 'toLowPrice'}
+            value='toLowPrice'
+            name='radio'
+            type='radio'
+            className='form__radio'
+          />
           - по убыванию цены
         </label>
         <label className='form__label'>
-          <input name='radio' type='radio' className='form__radio' />
+          <input
+            onChange={handleSetSortOption}
+            checked={sortOptions === 'time'}
+            value='time'
+            name='radio'
+            type='radio'
+            className='form__radio'
+          />
           - по времени в пути
         </label>
       </div>
@@ -47,7 +83,7 @@ const Form: FC<PropsType> = ({
         <label className='form__label'>
           <input
             checked={transferFilters.includes('transfer')}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetTransfersFilters(e.target.value)}
+            onChange={handleSelectTransferFilters}
             value={'transfer'}
             type='checkbox'
             className='form__checkbox'
@@ -57,7 +93,7 @@ const Form: FC<PropsType> = ({
         <label className='form__label'>
           <input
             checked={transferFilters.includes('without')}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetTransfersFilters(e.target.value)}
+            onChange={handleSelectTransferFilters}
             value={'without'}
             type='checkbox'
             className='form__checkbox'
@@ -72,7 +108,8 @@ const Form: FC<PropsType> = ({
         <label className='form__label'>
           От
           <input
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(parseInt(e.target.value))}
+            onKeyDown={handleValidateInput}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMinPrice(Number(e.target.value))}
             type='number'
             className='form__input'
             name='minPrice'
@@ -82,7 +119,8 @@ const Form: FC<PropsType> = ({
         <label className='form__label'>
           До
           <input
-            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMaxPrice(parseInt(e.target.value))}
+            onKeyDown={handleValidateInput}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => handleSetMaxPrice(Number(e.target.value))}
             type='number'
             className='form__input'
             name='maxPrice'
