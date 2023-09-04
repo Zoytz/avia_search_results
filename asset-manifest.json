@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/avia_search_results/static/css/main.19332cce.css",
+    "main.js": "/avia_search_results/static/js/main.479eccf0.js",
+    "static/media/LOT.png": "/avia_search_results/static/media/LOT.cef33237bead42b7fe9b.png",
+    "static/media/Aeroflot.svg": "/avia_search_results/static/media/Aeroflot.74e1287adf30311e5bc8d3d2ec7b24c4.svg",
+    "index.html": "/avia_search_results/index.html",
+    "static/media/clock.svg": "/avia_search_results/static/media/clock.38585fec598ef79bfbd0c5c4b099074a.svg",
+    "main.19332cce.css.map": "/avia_search_results/static/css/main.19332cce.css.map",
+    "main.479eccf0.js.map": "/avia_search_results/static/js/main.479eccf0.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.19332cce.css",
+    "static/js/main.479eccf0.js"
+  ]
+}
