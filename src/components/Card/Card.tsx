@@ -65,33 +65,25 @@ const Card = ({ flight }: any) => {
         </p>
       </div>
 
-      {// Мапимся по этапам перелета
+      {
         flight.legs.map((leg: any) => {
-          // Узнаем - есть ли пересадки в этапе перелета
+          
           const hasTransfer = leg.segments.length > 1;
-          // Получаем объект даты из строки
           const departureDate = new Date(leg.segments[0].departureDate);
-          // Получаем словами краткое название месяца и дня недели
           const departureMonthAndDay = departureDate.toLocaleDateString('ru-RU', { weekday: 'short', month: 'short' });
-          // Получаем часы и если цифра одна - добавляем спереди 0
           const departureHours = String(departureDate.getHours()).length < 2 ?
             `0${departureDate.getHours()}` :
             departureDate.getHours();
-          // Получаем минуты и если цифра одна - добавляем спереди 0
           const departureMinutes = String(departureDate.getMinutes()).length < 2 ?
             `0${departureDate.getMinutes()}` :
             departureDate.getMinutes();
-          // Проверяем - есть ли пересадки. Если есть - создаем объект даты из даты прибытия второго перелета
           const arrivalDate = !hasTransfer ?
             new Date(leg.segments[0].arrivalDate) :
             new Date(leg.segments[1].arrivalDate);
-          // Получаем словами краткое название месяца и дня недели  
           const arrivalDateMonthAndDay = arrivalDate.toLocaleDateString('ru-RU', { weekday: 'short', month: 'short' });
-          // Получаем часы и если цифра одна - добавляем спереди 0
           const arrivalHours = String(arrivalDate.getHours()).length < 2 ?
             `0${arrivalDate.getHours()}` :
             arrivalDate.getHours();
-          // Получаем минуты и если цифра одна - добавляем спереди 0
           const arrivalMinutes = String(arrivalDate.getMinutes()).length < 2 ?
             `0${arrivalDate.getMinutes()}` :
             arrivalDate.getMinutes();
